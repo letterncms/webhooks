@@ -1,0 +1,24 @@
+{
+    "name": "letterncms/webhooks",
+    "description": "Tell other services what happens on your site: signed webhooks for entries, media, accounts and site builds, with retries and a delivery log.",
+    "type": "cms-plugin",
+    "version": "0.2.0",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "letterncms/cms": ">=0.22 <1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cms\\Webhooks\\": "src/"
+        }
+    },
+    "extra": {
+        "cms": {
+            "label": "Webhooks",
+            "icon": "send",
+            "provider": "Cms\\Webhooks\\WebhooksPlugin"
+        }
+    },
+    "homepage": "https://github.com/letterncms/webhooks"
+}
