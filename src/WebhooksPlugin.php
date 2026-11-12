@@ -55,6 +55,26 @@ final class WebhooksPlugin extends Plugin
         Events::listen($cms, $this->app->make(Dispatcher::class));
         $this->abilities();
 
+        // What the Audit Log calls each change, once it has happened.
+        $cms->hooks()->addFilter('audit.past', static fn (array $past): array => $past + [
+            'webhooks/create' => __('Created Webhook'),
+            'webhooks/update' => __('Updated Webhook'),
+            'webhooks/renew-key' => __('Renewed Webhook Signing Secret'),
+            'webhooks/delete' => __('Deleted Webhook'),
+            'webhooks/test' => __('Tested Webhook'),
+            'webhook-deliveries/create' => __('Redelivered Webhook'),
+        ]);
+        // A webhook is changed by its id: the log names it as the list does, by its name, else where it sends.
+        $cms->hooks()->addFilter('audit.subject', static function (?string $subject, string $ability, array $input): ?string {
+            if ($subject !== null || ! str_starts_with($ability, 'webhooks/') || ! is_string($input['id'] ?? null)) {
+                return $subject;
+            }
+
+            $hook = app(Endpoints::class)->find($input['id']);
+
+            return $hook === null ? null : ($hook['name'] !== '' ? $hook['name'] : $hook['url']);
+        });
+
         $cms->admin()->nav('webhooks', ['path' => '/webhooks', 'icon' => 'send', 'section' => 'system', 'order' => 85, 'pinned' => false, 'permission' => 'webhooks.manage']);
         $cms->admin()->widget('webhooks-deliveries', ['label' => 'Webhooks', 'description' => __('Says when deliveries failed or are being tried again. Empty while all is well.'), 'icon' => 'send', 'column' => 'side', 'order' => 85, 'permission' => 'webhooks.manage',
             'action' => ['label' => 'All Webhooks', 'to' => '/webhooks'], 'view' => WebhooksViews::widget(...)]);

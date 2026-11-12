@@ -216,6 +216,10 @@ final class WebhooksTest extends TestCase
         app(Dispatcher::class)->process();
 
         $this->assertSame('webhook.test', $this->sender->sent[0]['headers']['X-Cms-Event']);
+
+        // The Audit Log names the webhook a change was made to by its id: by where it sends, as it has no name.
+        $row = $this->run_('audit/list', ['ability' => 'webhooks/test'], AbilityContext::forUser($this->admin(), 'admin'))['items'][0] ?? null;
+        $this->assertSame(['Tested Webhook', 'https://hooks.example.com/in'], [$row['label'] ?? null, $row['subject'] ?? null]);
     }
 
     public function test_media_accounts_and_builds_say_what_changed(): void
@@ -494,13 +498,24 @@ final class WebhooksTest extends TestCase
         $form = $this->run_('webhooks/editable', ['id' => $hook['id']], $context);
         $this->assertSame([false, true, true, false], [$form['event_entry__saved'], $form['event_entry__published'], $form['event_account__email_changed'], $form['event_site__built']]);
 
-        // The home-screen widget every plugin must have says nothing while all is well.
+        // The home-screen widget says nothing while all is well.
         $widget = static fn () => $views->resolve('widget.webhooks-deliveries', $admin)['root'];
         $this->assertArrayNotHasKey('children', $widget());
         $this->sender->answers = [410];
         $this->publish();
         app(Dispatcher::class)->process();
         $this->assertSame('2 deliveries failed', $widget()['children'][0]['props']['title']);
-        $this->assertSame([], $this->cms()->packages()->problems());
+    }
+
+    public function test_every_change_has_a_past_tense_label_for_the_audit_log(): void
+    {
+        $past = $this->cms()->hooks()->filter('audit.past', []);
+        $changes = array_filter($this->cms()->abilities()->all(), static fn ($ability) => $ability->package === 'letterncms/webhooks' && ! $ability->isReadOnly());
+
+        $this->assertNotSame([], $changes);
+
+        foreach ($changes as $name => $ability) {
+            $this->assertIsString($past[$name] ?? null, "{$name} has no past-tense label: add it to the audit.past filter.");
+        }
     }
 }

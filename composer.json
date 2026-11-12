@@ -2,11 +2,11 @@
     "name": "letterncms/webhooks",
     "description": "Tell other services what happens on your site: signed webhooks for entries, media, accounts and site builds, with retries and a delivery log.",
     "type": "cms-plugin",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "license": "MIT",
     "require": {
         "php": "^8.4",
-        "letterncms/cms": ">=0.22 <1"
+        "letterncms/cms": ">=0.26 <1"
     },
     "autoload": {
         "psr-4": {

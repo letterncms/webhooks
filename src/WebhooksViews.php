@@ -26,15 +26,15 @@ final class WebhooksViews
 
     private function list(): array
     {
-        return ['type' => 'ui/page', 'props' => ['title' => __('Webhooks'), 'icon' => 'send', 'actions' => [
-            // Its events are chosen on its own page, where there is room for them.
-            ['label' => __('New Webhook'), 'name' => 'new-webhook', 'icon' => 'plus', 'variant' => 'primary', 'ability' => 'webhooks/create',
-                'input' => ['url' => '{values.url}', 'name' => '{values.name}'], 'then' => 'open', 'to' => '/webhooks/{result.id}?tab=settings',
-                'form' => ['title' => __('New Webhook'), 'confirm' => __('Create'), 'fields' => [
-                    ['handle' => 'url', 'type' => 'url', 'label' => __('Address'), 'placeholder' => 'https://example.com/hook', 'required' => true, 'autofocus' => true],
-                    ['handle' => 'name', 'type' => 'text', 'label' => __('Name'), 'placeholder' => __('Optional')],
-                ]]],
-        ]], 'children' => [
+        // The one way to make a webhook, once: in the header, also while the list is empty. Its events are chosen on its own page, where there is room for them.
+        $new = ['label' => __('New Webhook'), 'name' => 'new-webhook', 'icon' => 'plus', 'variant' => 'primary', 'ability' => 'webhooks/create',
+            'input' => ['url' => '{values.url}', 'name' => '{values.name}'], 'then' => 'open', 'to' => '/webhooks/{result.id}?tab=settings',
+            'form' => ['title' => __('New Webhook'), 'confirm' => __('Create Webhook'), 'fields' => [
+                ['handle' => 'url', 'type' => 'url', 'label' => __('Address'), 'placeholder' => 'https://example.com/hook', 'required' => true, 'autofocus' => true],
+                ['handle' => 'name', 'type' => 'text', 'label' => __('Name'), 'placeholder' => __('Optional')],
+            ]]];
+
+        return ['type' => 'ui/page', 'props' => ['title' => __('Webhooks'), 'icon' => 'send', 'actions' => [$new]], 'children' => [
             ['type' => 'ui/records', 'props' => [
                 'id' => 'webhooks', 'label' => __('Webhooks'), 'key' => 'id', 'search' => false,
                 'source' => ['ability' => 'webhooks/list'],
