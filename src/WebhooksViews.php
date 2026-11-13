@@ -136,7 +136,7 @@ final class WebhooksViews
         return (string) preg_replace('/\{([^{}]*)\}/', '{{$1}}', $text);
     }
 
-    /** The home-screen widget: nothing while all is well, a line when deliveries failed or are being tried again. */
+    /** The home-screen widget: a line when deliveries failed or are being tried again, an empty view while all is well. */
     public static function widget(): array
     {
         $week = Delivery::query()->where('created_at', '>=', now()->subDays(7));

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.0 (2026-11-13)
+
+### Changed
+
+- The Dashboard widget says "No failed deliveries" instead of showing an empty panel.
+
 ## 0.3.0 (2026-11-12)
 
 ### Added

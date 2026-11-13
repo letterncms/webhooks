@@ -76,7 +76,7 @@ final class WebhooksPlugin extends Plugin
         });
 
         $cms->admin()->nav('webhooks', ['path' => '/webhooks', 'icon' => 'send', 'section' => 'system', 'order' => 85, 'pinned' => false, 'permission' => 'webhooks.manage']);
-        $cms->admin()->widget('webhooks-deliveries', ['label' => 'Webhooks', 'description' => __('Says when deliveries failed or are being tried again. Empty while all is well.'), 'icon' => 'send', 'column' => 'side', 'order' => 85, 'permission' => 'webhooks.manage',
+        $cms->admin()->widget('webhooks-deliveries', ['label' => 'Webhooks', 'description' => __('Says when deliveries failed or are being tried again.'), 'empty' => 'No failed deliveries', 'icon' => 'send', 'column' => 'side', 'order' => 85, 'permission' => 'webhooks.manage',
             'action' => ['label' => 'All Webhooks', 'to' => '/webhooks'], 'view' => WebhooksViews::widget(...)]);
         $this->app->make(WebhooksViews::class)->register();
 
